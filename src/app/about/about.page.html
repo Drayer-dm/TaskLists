@@ -1,0 +1,31 @@
+<ion-header class="ion-no-border" [translucent]="true">
+  <ion-toolbar>
+    <!-- Botón ☰ del menú lateral. En PC se oculta solo (el menú ya está fijo) -->
+    <ion-buttons slot="start">
+      <ion-menu-button />
+    </ion-buttons>
+    <ion-title>Acerca de</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <app-page-template>
+    <app-board-header pageHeader eyebrow="Acerca de" heading="Cómo está hecha TaskList" />
+
+    <!-- Introducción + tecnologías usadas -->
+    <section pageMain class="lead">
+      <p>{{ lead }}</p>
+      <ul aria-label="Tecnologías">
+        @for (tech of stack; track tech) {
+        <li><app-chip>{{ tech }}</app-chip></li>
+        }
+      </ul>
+    </section>
+
+    <!-- Criterio: conceptos fundamentales del framework -->
+    <app-info-section pageMain label="Arquitectura y conceptos" [intro]="architectureIntro" [concepts]="architecture" />
+
+    <!-- Criterio: patrones de diseño del framework -->
+    <app-info-section pageMain label="Patrones de diseño" [intro]="patternsIntro" [concepts]="patterns" />
+  </app-page-template>
+</ion-content>

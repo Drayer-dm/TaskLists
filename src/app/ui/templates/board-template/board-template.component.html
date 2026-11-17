@@ -1,0 +1,13 @@
+<header class="header">
+  <ng-content select="[boardHeader]" />
+</header>
+
+<!-- No es <main>: ion-content ya tiene role="main" -->
+<div class="columns">
+  <section class="side">
+    <ng-content select="[boardSide]" />
+  </section>
+  <section class="main">
+    <ng-content select="[boardMain]" />
+  </section>
+</div>

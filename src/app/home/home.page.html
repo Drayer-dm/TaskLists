@@ -1,21 +1,111 @@
-<ion-header [translucent]="true">
+<!-- ion-no-border: quita la sombra de Material; la línea fina inferior la pone el tema -->
+<ion-header class="ion-no-border" [translucent]="true">
   <ion-toolbar>
-    <ion-title> Blank </ion-title>
+    <!-- Botón ☰ del menú lateral. En PC se oculta solo (el menú ya está fijo) -->
+    <ion-buttons slot="start">
+      <ion-menu-button />
+    </ion-buttons>
+    <ion-title> TaskList </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <app-board-template>
+    <app-board-header boardHeader eyebrow="Tablero de tareas" />
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>
-      Start with Ionic
-      <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a>
-    </p>
-  </div>
+    <!-- Formulario para lo que estamos haciendo-->
+    <section boardSide>
+      <app-section-heading label="Nueva tarea" />
+
+      <!-- La etiqueta va en slot="label" para usar nuestro átomo (mayúsculas espaciadas).
+           maxlength + counter: límite y contador "0 / 60" nativos de ion-input. -->
+      <ion-item class="field"
+        ><!-- Ingreso del titulo de la tarea-->
+        <ion-input
+          labelPlacement="stacked"
+          [(ngModel)]="newTitle"
+          placeholder="¿Qué tienes que hacer?"
+          [maxlength]="limits.title"
+          [counter]="true"
+        >
+          <app-section-label slot="label">Título</app-section-label>
+        </ion-input>
+      </ion-item>
+
+      <ion-item class="field"
+        ><!-- Ingreso de la descripcion de la tarea-->
+        <ion-input
+          labelPlacement="stacked"
+          [(ngModel)]="newDescription"
+          placeholder="Cuéntalo en una línea"
+          [maxlength]="limits.description"
+          [counter]="true"
+        >
+          <app-section-label slot="label">Descripción</app-section-label>
+        </ion-input>
+      </ion-item>
+
+      <!--aquí se guarda la tarea que ingresaron-->
+      <ion-button class="add-button" expand="block" [disabled]="!canAdd" (click)="addTask()">
+        <ion-icon slot="start" name="add-outline"></ion-icon>
+        Agregar tarea
+      </ion-button>
+    </section>
+
+    <!--lista de tareas-->
+    <section boardMain>
+      <app-section-heading label="Tareas" [count]="tasks().length" />
+      @if (tasks().length) {
+      <ion-list class="task-list">
+        @for (task of tasks(); track task.id; let i = $index) {
+        <!-- ion-item-sliding se mantiene de tu versión; sin ion-item-options no desliza nada -->
+        <ion-item-sliding>
+          <!-- Cada tarea es un ion-item con su título y descripción -->
+          <ion-item class="task">
+            <!-- número decorativo: el lector de pantalla ya anuncia la posición en la lista -->
+            <span slot="start" class="index" aria-hidden="true">{{ taskNumber(i) }}</span>
+            <!-- ion-text-wrap: deja que textos largos bajen de línea en vez de cortarse con "..." -->
+            <ion-label class="ion-text-wrap">
+              <h2>
+                <strong>{{ task.title }}</strong>
+              </h2>
+              <p>{{ task.description }}</p>
+              <!-- Fecha y hora de creación (átomo propio) -->
+              <app-timestamp class="created" [value]="task.createdAt" label="Creada el" />
+            </ion-label>
+
+            <!-- Botón editar: abre la ventana "Editar tarea" con los datos actuales.
+                 Mismo estilo que eliminar (gris, sin fondo, 44px para el dedo). -->
+            <ion-button
+              slot="end"
+              class="edit"
+              color="medium"
+              fill="clear"
+              [attr.aria-label]="'Editar tarea ' + task.title"
+              (click)="editTask(task)"
+            >
+              <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+            </ion-button>
+
+            <!-- Botón eliminar junto a cada tarea. color="medium" (gris) y no
+                     "danger" (rojo): el rojo rompe la paleta monocromo. -->
+            <ion-button
+              slot="end"
+              class="delete"
+              color="medium"
+              fill="clear"
+              [attr.aria-label]="'Eliminar tarea ' + task.title"
+              (click)="deleteTask(task.id)"
+            >
+              <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-button>
+          </ion-item>
+        </ion-item-sliding>
+        }
+      </ion-list>
+      } @else {
+      <app-empty-state message="No hay tareas" hint="Agrega la primera con el formulario." />
+      }
+    </section>
+  </app-board-template>
 </ion-content>

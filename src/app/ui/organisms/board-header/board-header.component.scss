@@ -1,0 +1,20 @@
+// Bloque corto y aireado: separa la cabecera del contenido con una línea fina
+:host {
+  display: grid;
+  gap: var(--space-2);
+  padding-bottom: var(--space-5);
+  border-bottom: var(--border-thin);
+}
+
+.date {
+  margin: 0;
+  font-size: clamp(1.5rem, 5vw, 2.25rem); // crece con la pantalla, sin pasarse en PC
+  font-weight: 300;
+  letter-spacing: var(--tracking-title);
+  line-height: 1.2;
+}
+
+// "martes" → "Martes" sin tocar el texto
+.date::first-letter {
+  text-transform: uppercase;
+}

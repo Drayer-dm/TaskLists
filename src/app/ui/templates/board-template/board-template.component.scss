@@ -1,0 +1,35 @@
+// Ancho máximo y márgenes salen de tokens (--layout-*): la barra superior usa
+// los mismos, así el título queda alineado con el contenido en cualquier pantalla.
+:host {
+  display: grid;
+  gap: var(--space-5);
+  max-width: var(--layout-max);
+  margin: 0 auto;
+  // safe-area izq/der: celulares en horizontal con notch al costado.
+  // Arriba no hace falta: el ion-header ya deja espacio. Abajo sí (barra de gestos).
+  padding: var(--space-5) calc(var(--layout-gutter) + var(--ion-safe-area-right, 0px))
+    calc(var(--space-6) + var(--ion-safe-area-bottom, 0px))
+    calc(var(--layout-gutter) + var(--ion-safe-area-left, 0px));
+  // Container query: las columnas dependen del espacio que tiene el template,
+  // no del ancho de la ventana. Así en PC, con el menú lateral fijo ocupando
+  // ~260px, no se aprietan dos columnas en un espacio chico.
+  container-type: inline-size;
+}
+
+.columns {
+  display: grid;
+  gap: var(--space-6);
+}
+
+// Espacio amplio: formulario a la izquierda (fijo al hacer scroll) y lista a la derecha
+@container (min-width: 820px) {
+  .columns {
+    grid-template-columns: 320px minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .side {
+    position: sticky;
+    top: var(--space-5);
+  }
+}

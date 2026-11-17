@@ -1,37 +1,303 @@
 /*
  * App Global CSS
  * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
+ * Aquí sólo va lo que afecta a TODA la app: fuentes, paleta de Ionic y estilos
+ * base. Los estilos de cada pieza viven en su componente (atomic design).
+ * Los tokens (colores por rol, espaciado...) están en theme/variables.scss.
  */
 
+/* Fuente Jost auto-alojada (paquete @fontsource): no hace peticiones a Google
+   Fonts, funciona offline en Capacitor y no expone al usuario a terceros.
+   Sólo el subconjunto "latin" (incluye á é í ó ú ñ ¿ ¡) y 3 pesos = poco peso. */
+@import '@fontsource/jost/latin-300.css';
+@import '@fontsource/jost/latin-400.css';
+@import '@fontsource/jost/latin-500.css';
+
+//Lista de colores agregada para poder cambiarlos a gusto
+//Ahora siguen una paleta monocromo minimalista (111 · 333 · 777 · BEB8AD · E6E1D7 · F6F4EE).
+//Ionic los usa cuando un componente lleva color="primary", etc.
+:root {
+  /* primary = tinta negra */
+  --ion-color-primary: #111111;
+  --ion-color-primary-rgb: 17, 17, 17;
+  --ion-color-primary-contrast: #f6f4ee;
+  --ion-color-primary-contrast-rgb: 246, 244, 238;
+  --ion-color-primary-shade: #0f0f0f;
+  --ion-color-primary-tint: #292929;
+
+  /* secondary = grafito */
+  --ion-color-secondary: #333333;
+  --ion-color-secondary-rgb: 51, 51, 51;
+  --ion-color-secondary-contrast: #f6f4ee;
+  --ion-color-secondary-contrast-rgb: 246, 244, 238;
+  --ion-color-secondary-shade: #2d2d2d;
+  --ion-color-secondary-tint: #474747;
+
+  /* tertiary = gris medio */
+  --ion-color-tertiary: #777777;
+  --ion-color-tertiary-rgb: 119, 119, 119;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #696969;
+  --ion-color-tertiary-tint: #858585;
+
+  /* success / warning / danger: NO se cambian. No forman parte de la paleta
+       Bauhaus, pero Ionic los usa en alertas y toasts, y ahí el color sí
+       comunica (verde = ok, rojo = peligro). */
+
+  /* success */
+  --ion-color-success: #2dd36f;
+  --ion-color-success-rgb: 45, 211, 111;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #28ba62;
+  --ion-color-success-tint: #42d77d;
+
+  /* warning */
+  --ion-color-warning: #ffc409;
+  --ion-color-warning-rgb: 255, 196, 9;
+  --ion-color-warning-contrast: #000000;
+  --ion-color-warning-contrast-rgb: 0, 0, 0;
+  --ion-color-warning-shade: #e0ac08;
+  --ion-color-warning-tint: #ffca22;
+
+  /* danger */
+  --ion-color-danger: #eb445a;
+  --ion-color-danger-rgb: 235, 68, 90;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #cf3c4f;
+  --ion-color-danger-tint: #ed576b;
+
+  /* dark */
+  --ion-color-dark: #111111;
+  --ion-color-dark-rgb: 17, 17, 17;
+  --ion-color-dark-contrast: #f6f4ee;
+  --ion-color-dark-contrast-rgb: 246, 244, 238;
+  --ion-color-dark-shade: #0f0f0f;
+  --ion-color-dark-tint: #292929;
+
+  /* medium */
+  --ion-color-medium: #777777;
+  --ion-color-medium-rgb: 119, 119, 119;
+  --ion-color-medium-contrast: #ffffff;
+  --ion-color-medium-contrast-rgb: 255, 255, 255;
+  --ion-color-medium-shade: #696969;
+  --ion-color-medium-tint: #858585;
+
+  /* light = arena */
+  --ion-color-light: #e6e1d7;
+  --ion-color-light-rgb: 230, 225, 215;
+  --ion-color-light-contrast: #111111;
+  --ion-color-light-contrast-rgb: 17, 17, 17;
+  --ion-color-light-shade: #cac6bd;
+  --ion-color-light-tint: #e9e4db;
+
+  /* Ionic usa esta variable para toda su tipografía */
+  --ion-font-family: var(--font-family);
+}
+
+//Variantes de cada color para usarlas directo en el HTML:
+//color="primary-tint" (más claro) o color="primary-shade" (más oscuro).
+//Toman los valores de la lista de arriba, así que si cambias un color sus variantes cambian solas.
+$colores: primary, secondary, tertiary, success, warning, danger, dark, medium, light;
+
+@each $color in $colores {
+  @each $variante in tint, shade {
+    .ion-color-#{$color}-#{$variante} {
+      --ion-color-base: var(--ion-color-#{$color}-#{$variante});
+      --ion-color-base-rgb: var(--ion-color-#{$color}-rgb);
+      --ion-color-contrast: var(--ion-color-#{$color}-contrast);
+      --ion-color-contrast-rgb: var(--ion-color-#{$color}-contrast-rgb);
+      /* tonos que usa Ionic al presionar (shade) y al pasar el mouse (tint) */
+      --ion-color-shade: color-mix(in srgb, var(--ion-color-#{$color}-#{$variante}), #000 12%);
+      --ion-color-tint: color-mix(in srgb, var(--ion-color-#{$color}-#{$variante}), #fff 10%);
+    }
+  }
+}
+
 /* Core CSS required for Ionic components to work properly */
-@import "@ionic/angular/css/core.css";
+@import '@ionic/angular/css/core.css';
 
 /* Basic CSS for apps built with Ionic */
-@import "@ionic/angular/css/normalize.css";
-@import "@ionic/angular/css/structure.css";
-@import "@ionic/angular/css/typography.css";
-@import "@ionic/angular/css/display.css";
+@import '@ionic/angular/css/normalize.css';
+@import '@ionic/angular/css/structure.css';
+@import '@ionic/angular/css/typography.css';
+@import '@ionic/angular/css/display.css';
 
 /* Optional CSS utils that can be commented out */
-@import "@ionic/angular/css/padding.css";
-@import "@ionic/angular/css/float-elements.css";
-@import "@ionic/angular/css/text-alignment.css";
-@import "@ionic/angular/css/text-transformation.css";
-@import "@ionic/angular/css/flex-utils.css";
+@import '@ionic/angular/css/padding.css';
+@import '@ionic/angular/css/float-elements.css';
+@import '@ionic/angular/css/text-alignment.css';
+@import '@ionic/angular/css/text-transformation.css';
+@import '@ionic/angular/css/flex-utils.css';
 
 /**
  * Ionic Dark Mode
  * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
+ * NO se usa la paleta oscura de Ionic: pisaría nuestros colores con azules
+ * propios de Ionic. El modo oscuro lo resuelven los tokens de
+ * theme/variables.scss (misma paleta, roles invertidos).
  */
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+/* @import '@ionic/angular/css/palettes/dark.system.css'; */
+
+/* ---------- Estilos base ---------- */
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-family);
+}
+
+/* ion-content es el "lienzo" con scroll de cada página: le damos el fondo papel */
+ion-content {
+  --background: var(--color-bg);
+  --color: var(--color-ink);
+}
+
+/* ---------- Tema de componentes Ionic (toda la app) ----------
+   Los colores ya llegan por las variables --ion-* de variables.scss.
+   Aquí sólo la forma minimalista: líneas finas, píldoras y letras espaciadas. */
+
+ion-toolbar {
+  --border-width: 0 0 1px; /* sólo línea inferior (la sombra se quita con ion-no-border) */
+  --border-color: var(--color-line);
+  --padding-start: var(--layout-gutter); /* mismo margen lateral que el contenido */
+  --padding-end: var(--layout-gutter);
+}
+
+/* El interior de la barra no pasa del ancho del contenido: en PC el título
+   queda alineado con la lista en vez de pegado al borde de la ventana. */
+ion-toolbar::part(container) {
+  box-sizing: border-box;
+  max-width: var(--layout-max);
+  margin-inline: auto;
+}
+
+ion-title {
+  font-weight: 300;
+  letter-spacing: var(--tracking-title);
+}
+
+/* En Android (md) el título trae 20px de margen propio; se quita para alinearlo.
+   En iOS se deja como está: ahí el título va centrado. */
+ion-title.md {
+  padding-inline: 0;
+}
+
+ion-button {
+  --border-radius: var(--radius-pill);
+  --box-shadow: none; /* plano: sin la sombra de Material */
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+}
+
+/* ---------- Ventana "Editar tarea" (ion-alert con cssClass: 'task-alert') ----------
+   ion-alert no usa shadow DOM (es "scoped"), así que sus partes internas
+   (.alert-wrapper, .alert-input, .alert-button...) se alcanzan desde aquí.
+   Misma forma que la página: fondo papel, líneas finas, etiquetas espaciadas
+   y botones píldora. El color sale de los tokens, así que el modo oscuro funciona solo. */
+
+ion-alert.task-alert {
+  --background: var(--color-bg);
+  --width: calc(100% - 2 * var(--layout-gutter));
+  --max-width: 440px;
+  --backdrop-opacity: 0.4;
+
+  /* Tarjeta: borde fino y esquinas redondeadas en vez de la sombra de Material */
+  .alert-wrapper {
+    border: var(--border-thin);
+    border-radius: var(--radius-card);
+    box-shadow: none;
+  }
+
+  .alert-head {
+    padding: var(--space-5) var(--space-5) var(--space-2);
+    text-align: start;
+  }
+
+  /* Título como las etiquetas de la página ("NUEVA TAREA"): chico, mayúsculas espaciadas */
+  .alert-title {
+    color: var(--color-muted);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  /* Aviso de campo vacío */
+  .alert-message {
+    padding: 0 var(--space-5);
+    color: var(--color-ink-soft);
+    font-size: 0.875rem;
+  }
+
+  .alert-input-group {
+    padding: var(--space-2) var(--space-5) 0;
+  }
+
+  /* Campos: sólo una línea inferior, igual que el formulario "Nueva tarea" */
+  .alert-input {
+    margin: 0 0 var(--space-3);
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--color-line);
+    color: var(--color-ink);
+    font-size: 1rem;
+  }
+
+  .alert-input:focus {
+    margin-bottom: calc(var(--space-3) - 1px); /* la línea crece 1px sin mover el resto */
+    border-bottom: 2px solid var(--color-ink);
+  }
+
+  textarea.alert-input {
+    min-height: 72px;
+  }
+
+  .alert-button-group {
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-5) var(--space-5);
+  }
+
+  /* Botones píldora de 44px (fáciles de tocar), con letras espaciadas como ion-button */
+  .alert-button {
+    min-height: 44px;
+    margin: 0;
+    padding: 0 var(--space-4);
+    border-radius: var(--radius-pill);
+    color: var(--color-ink);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  .alert-button-role-cancel {
+    color: var(--color-muted);
+  }
+
+  /* "Guardar" relleno con tinta, igual que el botón "Agregar tarea" */
+  .alert-button-confirm {
+    background: var(--color-ink);
+    color: var(--color-on-ink);
+  }
+}
+
+/* Foco visible y consistente para teclado (accesibilidad) en toda la app */
+:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 3px;
+}
+
+/* Si el usuario pidió menos movimiento al sistema, apagamos animaciones */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,27 +1,94 @@
-#container {
-  text-align: center;
+// Estilo de los componentes Ionic de esta página (forma; los colores vienen del tema).
+// Se ajustan con sus variables CSS (--background, --border-*...): es la forma
+// oficial de Ionic, porque su interior está en shadow DOM y no se alcanza con CSS normal.
 
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+// Formulario: cada campo queda con una sola línea inferior.
+// El ion-input ya dibuja su línea (sobre el contador), así que se quita la del ion-item.
+.field {
+  --background: transparent;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  --inner-border-width: 0;
+  --highlight-color-focused: var(--color-ink);
+  margin-bottom: var(--space-3);
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+.add-button {
+  --background: var(--color-ink);
+  --background-hover: var(--color-ink-soft);
+  --color: var(--color-on-ink);
+  height: 48px; // objetivo táctil cómodo en celular
+  margin: var(--space-5) 0 0;
+  font-size: 0.8rem;
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
+// Lista: filas separadas por líneas finas, sin tarjetas (más limpio y ordenado)
+.task-list {
+  padding: 0;
+  background: transparent;
+  border-top: var(--border-thin);
+}
 
-  color: #8c8c8c;
+.task {
+  --background: transparent;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  // la línea va en el item (no en su interior) para que cruce toda la fila,
+  // también por debajo del número
+  --border-width: 0 0 1px;
+  --inner-border-width: 0;
+  --border-color: var(--color-line);
+  --min-height: 64px;
 
+  ion-label {
+    margin: var(--space-3) 0;
+  }
+
+  h2 {
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+  }
+
+  // Jost sólo se carga hasta 500: así no se "inventa" una negrita falsa
+  strong {
+    font-weight: 500;
+  }
+
+  p {
+    margin-top: 2px;
+    color: var(--color-ink-soft);
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  // fecha de creación: bajo la descripción, con un poco de aire
+  .created {
+    margin-top: var(--space-1);
+  }
+
+  // textos largos sin espacios no deben romper el ancho de la fila
+  h2,
+  p {
+    overflow-wrap: anywhere;
+  }
+}
+
+// Número de la fila: chico, gris y con dígitos de igual ancho para que alineen
+.index {
+  min-width: 2ch;
+  margin-inline-end: var(--space-4);
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+}
+
+// Botones editar y borrar: 44px para que sean fáciles de tocar con el dedo
+.edit,
+.delete {
+  width: 44px;
+  height: 44px;
   margin: 0;
-}
-
-#container a {
-  text-decoration: none;
+  --padding-start: 0;
+  --padding-end: 0;
 }

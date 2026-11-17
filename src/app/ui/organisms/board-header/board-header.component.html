@@ -1,0 +1,5 @@
+@if (eyebrow()) {
+  <app-section-label>{{ eyebrow() }}</app-section-label>
+}
+<!-- Texto grande: el heading si viene, si no la fecha de hoy -->
+<p class="date">{{ heading() || today }}</p>

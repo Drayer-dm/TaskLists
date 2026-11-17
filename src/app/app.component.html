@@ -1,3 +1,20 @@
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  <!-- ion-split-pane: en pantallas grandes (≥ 992px) el menú queda fijo a la
+       izquierda; en celular y tablet se esconde y se abre con el botón ☰ -->
+  <ion-split-pane contentId="main-content" when="lg">
+    <!-- Menú lateral (navegación entre páginas) -->
+    <ion-menu contentId="main-content" type="overlay">
+      <ion-header class="ion-no-border">
+        <ion-toolbar>
+          <ion-title>TaskList</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+        <app-side-menu [links]="links" />
+      </ion-content>
+    </ion-menu>
+
+    <!-- id="main-content": aquí el router muestra la página de la URL actual -->
+    <ion-router-outlet id="main-content"></ion-router-outlet>
+  </ion-split-pane>
 </ion-app>
