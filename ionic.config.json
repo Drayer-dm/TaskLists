@@ -1,0 +1,7 @@
+{
+  "name": "EVA_02_Drayer_Duran",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
