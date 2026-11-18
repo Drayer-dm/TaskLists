@@ -301,3 +301,15 @@ ion-alert.task-alert {
     transition: none !important;
   }
 }
+
+/* ---------- Avisos (ion-toast con cssClass: 'task-toast') ----------
+   Misma paleta invertida que el botón principal: fondo tinta, texto papel. */
+ion-toast.task-toast {
+  --background: var(--color-ink);
+  --color: var(--color-on-ink);
+  --button-color: var(--color-on-ink);
+  --border-radius: var(--radius-card);
+  --box-shadow: none;
+  --max-width: 440px;
+  font-family: var(--font-family);
+}

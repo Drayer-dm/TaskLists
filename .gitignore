@@ -74,3 +74,6 @@ Thumbs.db
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Base de datos local de la API de sincronización (npm run api)
+/api/data/

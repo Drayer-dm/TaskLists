@@ -45,16 +45,62 @@
         </ion-input>
       </ion-item>
 
+      <!-- Cámara: foto opcional para la tarea nueva -->
+      @if (draftPhoto(); as photo) {
+      <app-photo-thumb
+        [src]="photo"
+        alt="Foto que se adjuntará a la nueva tarea"
+        removeLabel="Quitar foto de la nueva tarea"
+        (remove)="draftPhoto.set(null)"
+      />
+      } @else {
+      <ion-button
+        class="photo-button"
+        fill="outline"
+        expand="block"
+        [disabled]="takingPhoto()"
+        (click)="takeDraftPhoto()"
+      >
+        <ion-icon slot="start" name="camera-outline"></ion-icon>
+        <span>Tomar foto</span>
+      </ion-button>
+      }
+
       <!--aquí se guarda la tarea que ingresaron-->
-      <ion-button class="add-button" expand="block" [disabled]="!canAdd" (click)="addTask()">
+      <!-- Mientras espera el GPS el botón se desactiva y muestra la ruedita de carga -->
+      <ion-button class="add-button" expand="block" [disabled]="!canAdd || adding()" (click)="addTask()">
+        @if (adding()) {
+        <ion-spinner slot="start" name="crescent"></ion-spinner>
+        <span>Obteniendo ubicación…</span>
+        } @else {
         <ion-icon slot="start" name="add-outline"></ion-icon>
-        Agregar tarea
+        <span>Agregar tarea</span>
+        }
       </ion-button>
     </section>
 
     <!--lista de tareas-->
     <section boardMain>
       <app-section-heading label="Tareas" [count]="tasks().length" />
+
+      <!-- Servicios web: estado de la sincronización, sincronizar ahora e importar desde la API -->
+      <div class="sync-bar">
+        <app-sync-status [state]="syncState()" />
+        <div class="sync-actions">
+          <ion-button fill="outline" size="small" [disabled]="syncState().status === 'syncing'" (click)="syncNow()">
+            <ion-icon slot="start" name="sync-outline"></ion-icon>
+            Sincronizar
+          </ion-button>
+          <ion-button fill="outline" size="small" [disabled]="importing()" (click)="importTasks()">
+            @if (importing()) {
+            <ion-spinner slot="start" name="crescent"></ion-spinner>
+            } @else {
+            <ion-icon slot="start" name="cloud-download-outline"></ion-icon>
+            } Importar tareas
+          </ion-button>
+        </div>
+      </div>
+
       @if (tasks().length) {
       <ion-list class="task-list">
         @for (task of tasks(); track task.id; let i = $index) {
@@ -68,17 +114,53 @@
             <ion-label class="ion-text-wrap">
               <h2>
                 <strong>{{ task.title }}</strong>
+                @if (task.externalId !== undefined) {
+                <app-chip class="source">API</app-chip>
+                }
               </h2>
               <p>{{ task.description }}</p>
+
+              <!-- Foto de la cámara (sólo si tiene) -->
+              @if (task.photo) {
+              <app-photo-thumb
+                class="task-photo"
+                [src]="task.photo"
+                [alt]="'Foto de la tarea ' + task.title"
+                [removeLabel]="'Quitar foto de la tarea ' + task.title"
+                (remove)="removePhoto(task)"
+              />
+              }
+
               <!-- Fecha y hora de creación (átomo propio) -->
               <app-timestamp class="created" [value]="task.createdAt" label="Creada el" />
+              <!-- Ubicación (GPS) donde se creó: sólo si hubo permiso y el GPS respondió -->
+              @if (task.location) {
+              <app-location class="created" [value]="task.location" label="Creada en" />
+              }
+              <!-- Clima del lugar al crearla (API Open-Meteo) -->
+              @if (task.weather) {
+              <app-weather class="created" [value]="task.weather" />
+              }
             </ion-label>
+
+            <!-- Botón cámara: adjunta o cambia la foto de la tarea -->
+            <ion-button
+              slot="end"
+              class="action"
+              color="medium"
+              fill="clear"
+              [disabled]="takingPhoto()"
+              [attr.aria-label]="(task.photo ? 'Cambiar foto de la tarea ' : 'Adjuntar foto a la tarea ') + task.title"
+              (click)="attachPhoto(task)"
+            >
+              <ion-icon slot="icon-only" name="camera-outline"></ion-icon>
+            </ion-button>
 
             <!-- Botón editar: abre la ventana "Editar tarea" con los datos actuales.
                  Mismo estilo que eliminar (gris, sin fondo, 44px para el dedo). -->
             <ion-button
               slot="end"
-              class="edit"
+              class="action edit"
               color="medium"
               fill="clear"
               [attr.aria-label]="'Editar tarea ' + task.title"
@@ -91,7 +173,7 @@
                      "danger" (rojo): el rojo rompe la paleta monocromo. -->
             <ion-button
               slot="end"
-              class="delete"
+              class="action delete"
               color="medium"
               fill="clear"
               [attr.aria-label]="'Eliminar tarea ' + task.title"
@@ -104,7 +186,7 @@
         }
       </ion-list>
       } @else {
-      <app-empty-state message="No hay tareas" hint="Agrega la primera con el formulario." />
+      <app-empty-state message="No hay tareas" hint="Agrega la primera con el formulario o impórtalas desde la API." />
       }
     </section>
   </app-board-template>

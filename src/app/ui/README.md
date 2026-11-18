@@ -6,11 +6,11 @@ Cada nivel sólo puede usar piezas de los niveles **anteriores**:
 
 | Nivel | Qué es | Tiene estado / lógica de negocio | Piezas |
 |---|---|---|---|
-| `atoms/` | La pieza más pequeña con estilo propio | No | `section-label`, `chip`, `timestamp` (fecha y hora), `code-block` |
-| `molecules/` | Varios átomos que juntos hacen **una** cosa | No | `section-heading` (etiqueta + total), `empty-state`, `concept-card` (concepto + código) |
+| `atoms/` | La pieza más pequeña con estilo propio | No | `section-label`, `chip`, `timestamp` (fecha y hora), `location` (ubicación GPS con enlace al mapa), `weather` (clima), `code-block` |
+| `molecules/` | Varios átomos que juntos hacen **una** cosa | No | `section-heading` (etiqueta + total), `empty-state`, `concept-card` (concepto + código), `photo-thumb` (foto + quitar), `sync-status` (estado de la sincronización) |
 | `organisms/` | Secciones completas y reconocibles | No | `board-header` (etiqueta + fecha o título), `side-menu` (enlaces del menú), `info-section` (sección de conceptos) |
 | `templates/` | El esqueleto / layout de una pantalla, **sin datos** | No | `board-template` (Home: 1 o 2 columnas), `page-template` (Acerca de: columna de lectura) |
-| páginas (`src/app/home`, `src/app/about`) | Template + organismos + **datos reales** | Sí: aquí viven los datos | `HomePage`, `AboutPage` |
+| páginas (`src/app/home`, `login`, `permissions`, `about`) | Template + organismos + **datos reales** | Sí: aquí viven los datos | `HomePage`, `LoginPage`, `PermissionsPage`, `AboutPage` |
 
 ## Dónde entra Ionic
 

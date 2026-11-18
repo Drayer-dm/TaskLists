@@ -2,8 +2,8 @@
   <!-- ion-split-pane: en pantallas grandes (≥ 992px) el menú queda fijo a la
        izquierda; en celular y tablet se esconde y se abre con el botón ☰ -->
   <ion-split-pane contentId="main-content" when="lg">
-    <!-- Menú lateral (navegación entre páginas) -->
-    <ion-menu contentId="main-content" type="overlay">
+    <!-- Menú lateral (navegación entre páginas). Sin sesión se desactiva: en el login no aparece -->
+    <ion-menu contentId="main-content" type="overlay" [disabled]="!auth.user()">
       <ion-header class="ion-no-border">
         <ion-toolbar>
           <ion-title>TaskList</ion-title>
@@ -12,6 +12,22 @@
       <ion-content>
         <app-side-menu [links]="links" />
       </ion-content>
+
+      <!-- Usuario con sesión + cerrar sesión -->
+      @if (auth.user(); as user) {
+        <ion-footer class="ion-no-border">
+          <div class="account">
+            <app-section-label>Sesión</app-section-label>
+            <p class="user">{{ user }}</p>
+            <ion-menu-toggle [autoHide]="false">
+              <ion-button fill="outline" color="medium" size="small" (click)="logout()">
+                <ion-icon slot="start" [icon]="logoutIcon" aria-hidden="true" />
+                Cerrar sesión
+              </ion-button>
+            </ion-menu-toggle>
+          </div>
+        </ion-footer>
+      }
     </ion-menu>
 
     <!-- id="main-content": aquí el router muestra la página de la URL actual -->

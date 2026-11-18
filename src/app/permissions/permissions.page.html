@@ -1,0 +1,62 @@
+<ion-header class="ion-no-border" [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button />
+    </ion-buttons>
+    <ion-title>Permisos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <app-page-template>
+    <app-board-header pageHeader eyebrow="Privacidad" heading="Permisos de la app" />
+
+    <section pageMain>
+      <app-section-heading label="Periféricos" [count]="kinds.length" />
+      <ul class="permissions">
+        @for (kind of kinds; track kind) {
+        <li class="permission" [attr.data-kind]="kind">
+          <ion-icon [icon]="icons[kind]" aria-hidden="true" />
+          <div class="body">
+            <h3>
+              {{ info[kind].name }}
+              <app-chip class="state" [class.granted]="states()[kind] === 'granted'"
+                >{{ label(states()[kind]) }}</app-chip
+              >
+            </h3>
+            <p>{{ info[kind].purpose }}</p>
+
+            @if (states()[kind] === 'denied') {
+            <p class="help">{{ info[kind].deniedHelp }}</p>
+            } @else if (states()[kind] === 'not-needed') {
+            <p class="help">
+              En el navegador la foto se elige con el selector de archivos (que abre la cámara del celular). En Android
+              se pide el permiso de cámara la primera vez.
+            </p>
+            } @else if (canRequest(states()[kind])) {
+            <ion-button
+              fill="outline"
+              size="small"
+              [disabled]="requesting() === kind"
+              [attr.aria-label]="'Permitir ' + info[kind].name"
+              (click)="request(kind)"
+            >
+              Permitir
+            </ion-button>
+            }
+          </div>
+        </li>
+        }
+      </ul>
+    </section>
+
+    <section pageMain>
+      <app-section-heading label="Cómo se cuidan tus datos" />
+      <ul class="practices">
+        @for (practice of practices; track practice) {
+        <li>{{ practice }}</li>
+        }
+      </ul>
+    </section>
+  </app-page-template>
+</ion-content>

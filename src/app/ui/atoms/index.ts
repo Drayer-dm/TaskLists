@@ -2,4 +2,6 @@
 export * from './chip/chip.component';
 export * from './section-label/section-label.component';
 export * from './timestamp/timestamp.component';
+export * from './location/location.component';
+export * from './weather/weather.component';
 export * from './code-block/code-block.component';

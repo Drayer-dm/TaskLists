@@ -8,3 +8,23 @@ ion-split-pane {
 ion-menu {
   --background: var(--color-bg);
 }
+
+// Pie del menú: usuario con sesión y botón para cerrarla
+.account {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5) calc(var(--space-5) + var(--ion-safe-area-bottom, 0px));
+  border-top: var(--border-thin);
+}
+
+.user {
+  margin: 0;
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+
+.account ion-button {
+  justify-self: start;
+  margin: 0;
+  font-size: 0.7rem;
+}

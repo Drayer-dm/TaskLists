@@ -42,4 +42,10 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-feature android:name="android.hardware.location.gps" android:required="false" />
+    <!-- Cámara: para adjuntar fotos a las tareas. Se pide recién al tocar "Tomar foto".
+         required="false": la app también se instala en equipos sin cámara (la función se omite) -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <!-- Estado de la red (plugin Network): sincronizar al volver la conexión -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 </manifest>

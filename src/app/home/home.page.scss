@@ -83,12 +83,54 @@
   letter-spacing: 0.08em;
 }
 
-// Botones editar y borrar: 44px para que sean fáciles de tocar con el dedo
-.edit,
-.delete {
+// Botones cámara, editar y borrar: 44px para que sean fáciles de tocar con el dedo
+.action {
   width: 44px;
   height: 44px;
   margin: 0;
   --padding-start: 0;
   --padding-end: 0;
+}
+
+// Cámara: botón "Tomar foto" del formulario
+.photo-button {
+  --border-color: var(--color-line);
+  --color: var(--color-ink);
+  height: 44px;
+  margin: var(--space-3) 0 0;
+  font-size: 0.75rem;
+}
+
+// Foto de cada tarea: un poco más chica que la del formulario
+.task-photo {
+  max-width: 200px;
+  margin-bottom: var(--space-2);
+}
+
+// Etiqueta "API" de las tareas importadas
+.source {
+  margin-inline-start: var(--space-2);
+  vertical-align: middle;
+}
+
+// Barra de servicios web: estado de la sincronización + botones
+.sync-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+  margin-bottom: var(--space-4);
+
+  ion-button {
+    --border-color: var(--color-line);
+    --color: var(--color-ink);
+    margin: 0;
+    font-size: 0.65rem;
+  }
+}
+
+.sync-actions {
+  display: flex;
+  gap: var(--space-2);
 }

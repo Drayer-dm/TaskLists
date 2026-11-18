@@ -1,0 +1,88 @@
+<ion-header class="ion-no-border" [translucent]="true">
+  <ion-toolbar>
+    <ion-title>TaskList</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <app-page-template>
+    <app-board-header
+      pageHeader
+      eyebrow="Bienvenido"
+      [heading]="mode() === 'login' ? 'Inicia sesión' : 'Crea tu cuenta'"
+    />
+
+    <section pageMain class="card">
+      <!-- Elegir entre entrar con una cuenta o crear una nueva -->
+      <ion-segment [value]="mode()" (ionChange)="setMode($event.detail.value)">
+        <ion-segment-button value="login">
+          <ion-label>Ingresar</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="register">
+          <ion-label>Crear cuenta</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+
+      <form (ngSubmit)="submit()">
+        <ion-item class="field">
+          <ion-input
+            name="username"
+            labelPlacement="stacked"
+            [(ngModel)]="username"
+            autocomplete="username"
+            autocapitalize="off"
+            [maxlength]="20"
+            placeholder="ej: drayer"
+          >
+            <app-section-label slot="label">Usuario</app-section-label>
+          </ion-input>
+        </ion-item>
+
+        <ion-item class="field">
+          <ion-input
+            name="password"
+            type="password"
+            labelPlacement="stacked"
+            [(ngModel)]="password"
+            [autocomplete]="mode() === 'login' ? 'current-password' : 'new-password'"
+            [helperText]="mode() === 'register' ? 'Mínimo ' + passwordMin + ' caracteres' : ''"
+          >
+            <app-section-label slot="label">Contraseña</app-section-label>
+            <ion-input-password-toggle slot="end" />
+          </ion-input>
+        </ion-item>
+
+        @if (mode() === 'register') {
+        <ion-item class="field">
+          <ion-input
+            name="confirm"
+            type="password"
+            labelPlacement="stacked"
+            [(ngModel)]="confirm"
+            autocomplete="new-password"
+          >
+            <app-section-label slot="label">Repetir contraseña</app-section-label>
+          </ion-input>
+        </ion-item>
+        }
+
+        <!-- role="alert": el lector de pantalla lee el error apenas aparece -->
+        @if (error()) {
+        <p class="error" role="alert">{{ error() }}</p>
+        }
+
+        <ion-button class="submit" type="submit" expand="block" [disabled]="busy()">
+          @if (busy()) {
+          <ion-spinner slot="start" name="crescent"></ion-spinner>
+          }
+          <span>{{ mode() === 'login' ? 'Ingresar' : 'Crear cuenta' }}</span>
+        </ion-button>
+      </form>
+
+      <p class="note">
+        Cada cuenta tiene su propia lista de tareas. La contraseña no se guarda: sólo su hash (PBKDF2 con sal), y nunca
+        se envía al servidor.
+      </p>
+    </section>
+  </app-page-template>
+</ion-content>

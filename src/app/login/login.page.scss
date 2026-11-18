@@ -1,0 +1,54 @@
+// Tarjeta del formulario: angosta, cómoda de leer en celular y en PC
+.card {
+  display: grid;
+  gap: var(--space-4);
+  max-width: 420px;
+}
+
+// Pestañas Ingresar / Crear cuenta: línea fina y la activa subrayada en tinta
+ion-segment {
+  --background: transparent;
+  border-bottom: var(--border-thin);
+  border-radius: 0;
+}
+
+ion-segment-button {
+  --indicator-color: var(--color-ink);
+  --color: var(--color-muted);
+  --color-checked: var(--color-ink);
+  min-height: 44px;
+  letter-spacing: 0.08em;
+}
+
+.field {
+  --background: transparent;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  --inner-border-width: 0;
+  --highlight-color-focused: var(--color-ink);
+  margin-bottom: var(--space-3);
+}
+
+.submit {
+  --background: var(--color-ink);
+  --background-hover: var(--color-ink-soft);
+  --color: var(--color-on-ink);
+  height: 48px;
+  margin: var(--space-4) 0 0;
+  font-size: 0.8rem;
+}
+
+.error {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-strong);
+  border-radius: var(--radius-card);
+  font-size: 0.875rem;
+}
+
+.note {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--color-muted);
+}

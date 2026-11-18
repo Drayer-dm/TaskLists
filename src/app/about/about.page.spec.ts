@@ -29,7 +29,7 @@ describe('AboutPage', () => {
     const code = Array.from(element.querySelectorAll('app-code-block code'))
       .map((c) => c.textContent)
       .join('\n');
-    expect(code).toContain('@if (tasks.length) {');
+    expect(code).toContain('@if (tasks().length) {');
     expect(code).toContain('{{ task.title }}');
   });
 });

@@ -4,6 +4,11 @@
 
 export const environment = {
   production: false,
+  /**
+   * API propia de sincronización (carpeta api/, se levanta con `npm run api`).
+   * En un celular conectado a la misma red, cambiar localhost por la IP del PC.
+   */
+  apiUrl: 'http://localhost:3000/api',
 };
 
 /*

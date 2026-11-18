@@ -1,0 +1,70 @@
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// Cada permiso: ícono + nombre con su estado + para qué se usa
+.permission {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: var(--space-4);
+  padding: var(--space-4) 0;
+  border-top: var(--border-thin);
+
+  &:last-child {
+    border-bottom: var(--border-thin);
+  }
+
+  ion-icon {
+    width: 24px;
+    height: 24px;
+    color: var(--color-muted);
+  }
+
+  h3 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin: 0 0 var(--space-1);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  p {
+    margin: 0 0 var(--space-2);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--color-ink-soft);
+  }
+
+  .help {
+    color: var(--color-muted);
+  }
+
+  ion-button {
+    margin: var(--space-2) 0 0;
+    font-size: 0.7rem;
+  }
+}
+
+// Estado concedido: chip relleno (se distingue sin depender del color)
+.state.granted {
+  background: var(--color-ink);
+  color: var(--color-on-ink);
+}
+
+.practices li {
+  position: relative;
+  padding: 0 0 var(--space-3) var(--space-5);
+  font-size: 0.9rem;
+  line-height: 1.5;
+
+  &::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--color-muted);
+  }
+}

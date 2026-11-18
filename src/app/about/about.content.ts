@@ -10,12 +10,21 @@ import type { Concept } from '../ui/molecules';
  */
 
 /** Tecnologías principales (se muestran como chips) */
-export const STACK = ['Angular 22', 'Ionic 9', 'Capacitor 8', 'TypeScript 6', 'Vitest 5'] as const;
+export const STACK = [
+  'Angular 22',
+  'Ionic 9',
+  'Capacitor 8',
+  'TypeScript 6',
+  'Vitest 5',
+  'Playwright',
+  'Node.js (API)',
+] as const;
 
 export const LEAD =
   'TaskList es una app de tareas hecha con Angular 22, el framework que organiza la app en ' +
   'componentes, rutas y servicios, e Ionic 9, que aporta componentes con aspecto de app móvil. ' +
-  'Capacitor puede empaquetarla como app Android o iOS. Aquí se explica cómo está construida, ' +
+  'Con Capacitor usa la cámara y el GPS del teléfono, guarda las tareas en el dispositivo, tiene ' +
+  'cuentas de usuario y se sincroniza con una API. Aquí se explica cómo está construida, ' +
   'con ejemplos del propio código.';
 
 export const ARCHITECTURE_INTRO =
@@ -32,11 +41,15 @@ export const ARCHITECTURE: readonly Concept[] = [
     code: `main.ts
  └─ bootstrapApplication(AppComponent, providers)
      └─ AppComponent        ion-app + ion-split-pane
-         ├─ ion-menu        → SideMenuComponent (navegación)
-         └─ ion-router-outlet   la URL elige la página
-             ├─ /home   → HomePage   (lista de tareas)
-             └─ /about  → AboutPage  (esta página)
-                 └─ ui/: atoms → molecules → organisms → templates`,
+         ├─ ion-menu        → SideMenuComponent + cerrar sesión
+         └─ ion-router-outlet   la URL elige la página (guards: ¿hay sesión?)
+             ├─ /login     → LoginPage        (cuentas)
+             ├─ /home      → HomePage         (tareas, foto, GPS, sync)
+             ├─ /permisos  → PermissionsPage  (permisos y privacidad)
+             └─ /about     → AboutPage        (esta página)
+services/  TaskService · AuthService · LocationService · CameraService
+           SyncService · NetworkService
+api/       TaskApiService · TodoImportService · WeatherService · interceptores`,
   },
   {
     name: 'Componente standalone',
@@ -53,7 +66,8 @@ export const ARCHITECTURE: readonly Concept[] = [
   imports: [CommonModule, FormsModule, IonItem, IonInput, IonList, ...],
 })
 export class HomePage {
-  tasks: Task[] = [ ... ];
+  private readonly taskService = inject(TaskService);
+  readonly tasks = this.taskService.tasks;   // signal
   addTask() { ... }
   deleteTask(id: number) { ... }
 }`,
@@ -78,9 +92,9 @@ export class HomePage {
       'Bloques de la plantilla para mostrar u ocultar y para repetir elementos. "track task.id" le ' +
       'dice a Angular cómo reconocer cada tarea, así al borrar una no redibuja toda la lista.',
     location: 'src/app/home/home.page.html',
-    code: `@if (tasks.length) {
+    code: `@if (tasks().length) {
   <ion-list class="task-list">
-    @for (task of tasks; track task.id; let i = $index) {
+    @for (task of tasks(); track task.id; let i = $index) {
       <ion-item class="task"> ... </ion-item>
     }
   </ion-list>
@@ -148,6 +162,35 @@ export class TimestampComponent {
 <!-- se ve así:  27/10/2026 · 13:59 -->`,
   },
   {
+    name: 'Periféricos con Capacitor (cámara y GPS)',
+    description:
+      'Los plugins @capacitor/camera y @capacitor/geolocation hablan con el hardware. Cada uno se ' +
+      'entrega con un InjectionToken: la app usa el plugin real y las pruebas uno falso. Los permisos se ' +
+      'piden al usar la función, con una explicación previa, y si se rechazan la app sigue funcionando.',
+    location: 'src/app/services/camera.service.ts · location.service.ts',
+    code: `export const CAMERA = new InjectionToken<CameraApi>('Camera', {
+  providedIn: 'root',
+  factory: () => ({ takePhoto: (o) => Camera.takePhoto(o), ... }),
+});
+
+// en la prueba: la cámara "saca" la foto que se quiera
+{ provide: CAMERA, useValue: fakeCamera('granted') }`,
+  },
+  {
+    name: 'HttpClient e interceptores',
+    description:
+      'HttpClient hace las peticiones a las APIs. Los interceptores agregan, en un solo lugar, la llave ' +
+      'del usuario (sólo hacia nuestra API, nunca a terceros), un tiempo máximo de espera y reintentos ' +
+      'con espera creciente ante fallas temporales.',
+    location: 'src/main.ts · src/app/api/interceptors.ts',
+    code: `provideHttpClient(withFetch(), withInterceptors([authInterceptor, resilienceInterceptor]))
+
+next(request).pipe(
+  timeout(8_000),
+  retry({ count: 2, delay: (e, n) => isRetryable(e) ? timer(500 * 2 ** (n - 1)) : throwError(() => e) }),
+);`,
+  },
+  {
     name: 'Ionic y Capacitor',
     description:
       'Ionic aporta componentes móviles (ion-list, ion-item, ion-menu...). Son Web Components con ' +
@@ -195,8 +238,8 @@ pages        HomePage · AboutPage   ← aquí viven los datos`,
       'arriba hacia abajo, y las piezas visuales se pueden reutilizar y probar por separado.',
     location: 'home.page.ts → ui/atoms/timestamp',
     code: `// HomePage (contenedor): datos + lógica
-tasks: Task[] = [ ... ];
-addTask() { ... this.tasks.push(newTask); }
+readonly tasks = this.taskService.tasks;
+addTask() { ... this.taskService.add(this.newTitle, this.newDescription); }
 
 <!-- home.page.html: la página le pasa el dato -->
 <app-timestamp [value]="task.createdAt" label="Creada el" />
@@ -285,5 +328,41 @@ export class ChipComponent {}`,
 
 /* en cualquier componente */
 color: var(--color-ink);`,
+  },
+  {
+    name: 'Repository',
+    description:
+      'TaskService es el único que sabe dónde y cómo se guardan las tareas (Preferences, una lista por ' +
+      'usuario). La página sólo pide add(), update() o remove(): cambiar el almacenamiento no la afecta.',
+    location: 'src/app/services/task.service.ts',
+    code: `@Injectable({ providedIn: 'root' })
+export class TaskService {
+  private readonly store = signal<Task[]>([]);
+  readonly tasks = this.store.asReadonly();
+  async add(title, description, photo?) { ... GPS ... guardar ... }
+}`,
+  },
+  {
+    name: 'Chain of Responsibility (interceptores)',
+    description:
+      'Cada petición HTTP pasa por una cadena de interceptores; cada uno hace una sola cosa y le entrega ' +
+      'la petición al siguiente: primero las credenciales, después timeout y reintentos.',
+    location: 'src/app/api/interceptors.ts',
+    code: `withInterceptors([authInterceptor, resilienceInterceptor])
+//  petición → authInterceptor → resilienceInterceptor → servidor`,
+  },
+  {
+    name: 'Offline-first + sincronización',
+    description:
+      'Todo se guarda primero en el dispositivo. SyncService observa los cambios (effect sobre un ' +
+      'signal), espera 1,5 s para agruparlos y sincroniza en dos sentidos: trae, mezcla (gana la ' +
+      'edición más reciente) y envía con control de versión (If-Match).',
+    location: 'src/app/services/sync.service.ts · merge-tasks.ts',
+    code: `effect(() => {
+  if (this.taskService.changes() > 0) untracked(() => this.markPending());
+});
+const remote = await this.api.getTasks();
+await this.taskService.applyRemote(remote.tasks, remote.deleted);
+await this.api.putTasks(tasks, deleted, remote.version);`,
   },
 ];
